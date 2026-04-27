@@ -8,13 +8,13 @@ from devchat._service.uvicorn_logging import setup_logging
 api_app = FastAPI(
     title="DevChat Local Service",
 )
-# 配置 CORS
+# é…�ç½® CORS
 api_app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 允许所有源进行跨域请求
+    allow_origins=["*"],  # å…�è®¸æ‰€æœ‰æº�è¿›è¡Œè·¨åŸŸè¯·æ±‚
     allow_credentials=True,
-    allow_methods=["*"],  # 允许所有 HTTP 方法（如 GET、POST 等）
-    allow_headers=["*"],  # 允许所有请求头
+    allow_methods=["*"],  # å…�è®¸æ‰€æœ‰ HTTP æ–¹æ³•ï¼ˆå¦‚ GETã€�POST ç­‰ï¼‰
+    allow_headers=["*"],  # å…�è®¸æ‰€æœ‰è¯·æ±‚å¤´
 )
 
 api_app.include_router(router)
@@ -30,20 +30,7 @@ api_app.include_router(router)
 
 def main():
     # Use uvicorn to run the app because gunicorn doesn't support Windows
-    from uvicorn import Config, Server
-
-    server = Server(
-        Config(
-            api_app,
-            host="0.0.0.0",
-            port=config.PORT,
-        ),
-    )
-
-    # setup logging last, to make sure no library overwrites it
-    # (they shouldn't, but it happens)
-    setup_logging()
-    server.run()
+    pass
 
 
 if __name__ == "__main__":

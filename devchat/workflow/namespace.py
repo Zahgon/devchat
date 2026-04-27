@@ -44,21 +44,7 @@ def _load_custom_config() -> CustomConfig:
     """
     Load the custom config file.
     """
-    config = CustomConfig()
-
-    if not os.path.exists(CUSTOM_CONFIG_FILE):
-        return config
-
-    with open(CUSTOM_CONFIG_FILE, "r", encoding="utf-8") as file:
-        content = file.read()
-        yaml_content = yaml.safe_load(content)
-        try:
-            if yaml_content:
-                config = CustomConfig.parse_obj(yaml_content)
-        except ValidationError as err:
-            logger.warning("Invalid custom config file: %s", err)
-
-    return config
+    pass
 
 
 def get_prioritized_namespace_path() -> List[str]:
@@ -67,16 +53,7 @@ def get_prioritized_namespace_path() -> List[str]:
 
     priority: custom > merico > community
     """
-    config = _load_custom_config()
-
-    namespaces = config.namespaces
-
-    namespace_paths = [os.path.join(CUSTOM_BASE, ns) for ns in namespaces]
-
-    namespace_paths.append(MERICO_WORKFLOWS)
-    namespace_paths.append(COMMUNITY_WORKFLOWS)
-
-    return namespace_paths
+    pass
 
 
 def iter_namespace(ns_path: str, existing_names: Set[str]) -> Tuple[List[WorkflowMeta], Set[str]]:
@@ -91,45 +68,11 @@ def iter_namespace(ns_path: str, existing_names: Set[str]) -> Tuple[List[Workflo
         List[WorkflowMeta]: the workflows
         Set[str]: the updated existing workflow names
     """
-    root = Path(ns_path)
-    interest_files = set(COMMAND_FILENAMES)
-    result = []
-    unique_names = set(existing_names)
-    for file in root.rglob("*"):
-        try:
-            if file.is_file() and file.name in interest_files:
-                rel_path = file.relative_to(root)
-                parts = rel_path.parts
-                workflow_name = ".".join(parts[:-1])
-                is_first = workflow_name not in unique_names
-
-                # load the config content from file
-                with open(file, "r", encoding="utf-8") as file_handle:
-                    yaml_content = file_handle.read()
-                    command_conf = yaml.safe_load(yaml_content)
-                    # pop the "steps" field
-                    command_conf.pop("steps", None)
-
-                workflow = WorkflowMeta(
-                    name=workflow_name,
-                    namespace=root.name,
-                    active=is_first,
-                    command_conf=command_conf,
-                )
-                unique_names.add(workflow_name)
-                result.append(workflow)
-        except pyyaml.scanner.ScannerError as err:
-            logger.error("Failed to load %s: %s", rel_path, err)
-        except Exception as err:
-            logger.error("Unknown error when loading %s: %s", rel_path, err)
-
-    return result, unique_names
+    pass
 
 
 def main():
-    paths = get_prioritized_namespace_path()
-    for pathv in paths:
-        print(pathv)
+    pass
 
 
 if __name__ == "__main__":

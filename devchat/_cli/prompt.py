@@ -89,18 +89,4 @@ def prompt(
     ```
 
     """
-    from devchat._cli.router import llm_prompt
-
-    llm_prompt(
-        content,
-        parent,
-        reference,
-        instruct,
-        context,
-        model,
-        config_str,
-        functions,
-        function_name,
-        not_store,
-    )
-    sys.exit(0)
+    pass

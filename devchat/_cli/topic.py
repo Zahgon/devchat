@@ -11,22 +11,4 @@ def topic(list_topics: bool, skip: int, max_count: int):
     """
     Manage topics.
     """
-    import json
-
-    from devchat._cli.utils import get_model_config, handle_errors, init_dir
-    from devchat.openai import OpenAIChat, OpenAIChatConfig
-    from devchat.store import Store
-
-    repo_chat_dir, user_chat_dir = init_dir()
-
-    with handle_errors():
-        model, config = get_model_config(user_chat_dir)
-        parameters_data = config.dict(exclude_unset=True)
-        openai_config = OpenAIChatConfig(model=model, **parameters_data)
-
-        chat = OpenAIChat(openai_config)
-        store = Store(repo_chat_dir, chat)
-
-        if list_topics:
-            topics = store.select_topics(skip, skip + max_count)
-            print(json.dumps(topics, indent=2))
+    pass

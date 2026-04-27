@@ -23,18 +23,11 @@ class OpenAIMessage(Message):
             )
 
     def to_dict(self) -> dict:
-        state = asdict(self)
-        if state["name"] is None:
-            del state["name"]
-        if not state["function_call"] or len(state["function_call"].keys()) == 0:
-            del state["function_call"]
-        return state
+        pass
 
     @classmethod
     def from_dict(cls, message_data: dict) -> "OpenAIMessage":
-        keys = {f.name for f in fields(cls)}
-        kwargs = {k: v for k, v in message_data.items() if k in keys}
-        return cls(**kwargs)
+        pass
 
     def function_call_to_json(self):
         '''
@@ -45,31 +38,11 @@ class OpenAIMessage(Message):
             "arguments": '{"key": """value"""}'
         }
         '''
-        if not self.function_call:
-            return ""
-        function_call_copy = self.function_call.copy()
-        if "arguments" in function_call_copy:
-            # arguments field may be not a json string
-            # we can try parse it by eval
-            try:
-                function_call_copy["arguments"] = ast.literal_eval(function_call_copy["arguments"])
-            except Exception:
-                # if it is not a json string, we can do nothing
-                try:
-                    function_call_copy["arguments"] = json.loads(function_call_copy["arguments"])
-                except Exception:
-                    pass
-        return "```command\n" + json.dumps(function_call_copy) + "\n```"
+        pass
 
     def stream_from_dict(self, message_data: dict) -> str:
         """Append to the message from a dictionary returned from a streaming chat API."""
-        delta = message_data.get("content", "")
-        if self.content:
-            self.content += delta
-        else:
-            self.content = delta
-
-        return delta
+        pass
 
     def _validate_role(self) -> bool:
         """Validate the role attribute.
@@ -77,7 +50,7 @@ class OpenAIMessage(Message):
         Returns:
             bool: True if the role is valid, False otherwise.
         """
-        return self.role in ["system", "user", "assistant", "function"]
+        pass
 
     def _validate_name(self) -> bool:
         """Validate the name attribute.
@@ -85,7 +58,7 @@ class OpenAIMessage(Message):
         Returns:
             bool: True if the name is valid or None, False otherwise.
         """
-        return self._validate_string(self.name)
+        pass
 
     def _validate_string(self, string: str) -> bool:
         """Validate a string attribute.
@@ -93,8 +66,4 @@ class OpenAIMessage(Message):
         Returns:
             bool: True if the string is valid or None, False otherwise.
         """
-        if string is None:
-            return True
-        if not string.strip():
-            return False
-        return len(string) <= 64 and string.replace("_", "").isalnum()
+        pass

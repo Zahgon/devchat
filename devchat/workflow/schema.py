@@ -11,12 +11,7 @@ class WorkflowPyConf(BaseModel):
 
     @validator("version")
     def validate_version(cls, value):
-        pattern = r"^\d+\.\d+(\.\d+)?$"
-        if not re.match(pattern, value):
-            raise ValidationError(
-                f"Invalid version format: {value}. Expected format is x.y or x.y.z"
-            )
-        return value
+        pass
 
 
 class ExternalPyConf(BaseModel):
@@ -42,7 +37,7 @@ class WorkflowConfig(BaseModel):
 
     @validator("input_required", pre=True)
     def to_boolean(cls, value):
-        return value.lower() == "required"
+        pass
 
     class Config:
         extra = Extra.ignore

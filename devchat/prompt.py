@@ -59,62 +59,47 @@ class Prompt(ABC):
         Returns:
             bool: Whether the prompt is complete.
         """
-        if not self.request or not self.responses:
-            logger.warning(
-                "Incomplete prompt: request = %s, response = %s", self.request, self.responses
-            )
-            return False
-
-        if not self.timestamp:
-            logger.warning("Prompt lacks timestamp for hashing: %s", self.request)
-            return False
-
-        if not self._response_tokens:
-            return False
-
-        return True
+        pass
 
     @property
     def new_context(self) -> List[Message]:
-        return self._new_messages[Message.CONTEXT]
+        pass
 
     @property
     def request(self) -> Message:
-        return self._new_messages["request"]
+        pass
 
     @request.setter
     def request(self, value: Message):
-        self._new_messages["request"] = value
+        pass
 
     @property
     def responses(self) -> List[Message]:
-        return self._new_messages["responses"]
+        pass
 
     @property
     def timestamp(self) -> int:
-        return self._timestamp
+        pass
 
     @timestamp.setter
     def timestamp(self, value: int):
-        self._timestamp = value
+        pass
 
     @property
     def request_tokens(self) -> int:
-        return self._request_tokens
+        pass
 
     @request_tokens.setter
     def request_tokens(self, value: int):
-        self._request_tokens = value
+        pass
 
     @property
     def response_tokens(self) -> int:
-        if not self._response_tokens:
-            self._response_tokens = self._count_response_tokens()
-        return self._response_tokens
+        pass
 
     @response_tokens.setter
     def response_tokens(self, value: int):
-        self._response_tokens = value
+        pass
 
     @abstractmethod
     def _count_response_tokens(self) -> int:
@@ -124,7 +109,7 @@ class Prompt(ABC):
 
     @property
     def hash(self) -> str:
-        return self._hash
+        pass
 
     @property
     @abstractmethod
@@ -209,50 +194,15 @@ class Prompt(ABC):
         Returns:
             str: The hash of the prompt. None if the prompt is incomplete.
         """
-        if not self._complete_for_hashing():
-            self._hash = None
-
-        if self._hash:
-            return self._hash
-
-        self._response_tokens = self._count_response_tokens()
-
-        data = asdict(self)
-        data.pop("_hash")
-        string = str(tuple(sorted(data.items())))
-        self._hash = hashlib.sha256(string.encode("utf-8")).hexdigest()
-        return self._hash
+        pass
 
     def formatted_header(self) -> str:
         """Formatted string header of the prompt."""
-        formatted_str = f"User: {user_id(self.user_name, self.user_email)[0]}\n"
-
-        if not self._timestamp:
-            self._timestamp = datetime.timestamp(datetime.now())
-
-        local_time = unix_to_local_datetime(self._timestamp)
-        formatted_str += f"Date: {local_time.strftime('%a %b %d %H:%M:%S %Y %z')}\n\n"
-
-        return formatted_str
+        pass
 
     def formatted_footer(self, index: int) -> str:
         """Formatted string footer of the prompt."""
-
-        note = None
-        formatted_str = "\n\n"
-        reason = self._response_reasons[index]
-        if reason == "length":
-            note = "Incomplete model output due to max_tokens parameter or token limit"
-        elif reason == "function_call":
-            formatted_str += self.responses[index].function_call_to_json() + "\n\n"
-            note = "The model decided to call a function"
-        elif reason == "content_filter":
-            note = "Omitted content due to a flag from our content filters"
-
-        if note:
-            formatted_str += f"Note: {note} (finish_reason: {reason})\n\n"
-
-        return formatted_str + (f"prompt {self.hash}" if self.hash else "")
+        pass
 
     def formatted_full_response(self, index: int) -> str:
         """
@@ -264,41 +214,8 @@ class Prompt(ABC):
         Returns:
             str: The formatted response string. None if the response is invalid.
         """
-        if index >= len(self.responses) or not self.responses[index]:
-            logger.error(
-                "Response index %d is invalid to format: request = %s, response = %s",
-                index,
-                self.request,
-                self.responses,
-            )
-            return None
-
-        formatted_str = ""
-
-        if self.responses[index].content:
-            formatted_str += self.responses[index].content
-
-        return formatted_str + self.formatted_footer(index)
+        pass
 
     def shortlog(self) -> List[dict]:
         """Generate a shortlog of the prompt."""
-        if not self.request or not self.responses:
-            raise ValueError("Prompt is incomplete for shortlog.")
-
-        responses = []
-        for message in self.responses:
-            responses.append(
-                (message.content if message.content else "") + message.function_call_to_json()
-            )
-
-        return {
-            "user": user_id(self.user_name, self.user_email)[0],
-            "date": self._timestamp,
-            "context": [msg.to_dict() for msg in self.new_context],
-            "request": self.request.content,
-            "responses": responses,
-            "request_tokens": self._request_tokens,
-            "response_tokens": self._response_tokens,
-            "hash": self.hash,
-            "parent": self.parent,
-        }
+        pass

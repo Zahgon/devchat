@@ -26,7 +26,7 @@ class IDEService:
 
         :return: str
         """
-        return self._result
+        pass
 
     @rpc_method
     def install_python_env(self, command_name: str, requirements_file: str) -> str:
@@ -35,14 +35,14 @@ class IDEService:
         and requirements file, returning python path installed.
         Command name is the name of the environment to be installed.
         """
-        return self._result
+        pass
 
     @rpc_method
     def update_slash_commands(self) -> bool:
         """
         Update the slash commands and return a boolean indicating the success of the operation.
         """
-        return self._result
+        pass
 
     @rpc_method
     def ide_language(self) -> str:
@@ -51,7 +51,7 @@ class IDEService:
         - zh: Chinese
         - en: English
         """
-        return self._result
+        pass
 
     @rpc_method
     def ide_logging(self, level: str, message: str) -> bool:
@@ -72,7 +72,7 @@ class IDEService:
         Returns:
             A list of SymbolNode objects representing the symbols found in the document.
         """
-        return [SymbolNode.parse_obj(node) for node in self._result]
+        pass
 
     @rpc_method
     def find_type_def_locations(self, abspath: str, line: int, character: int) -> List[Location]:
@@ -87,11 +87,11 @@ class IDEService:
         Returns:
             A list of Location objects representing the locations of type definitions found.
         """
-        return [Location.parse_obj(loc) for loc in self._result]
+        pass
 
     @rpc_method
     def find_def_locations(self, abspath: str, line: int, character: int) -> List[Location]:
-        return [Location.parse_obj(loc) for loc in self._result]
+        pass
 
     @rpc_method
     def ide_name(self) -> str:
@@ -102,7 +102,7 @@ class IDEService:
         Returns:
             The name of the IDE as a string. For example, "vscode" or "pycharm".
         """
-        return self._result
+        pass
 
     @rpc_method
     def diff_apply(self, filepath, content) -> bool:
@@ -121,7 +121,7 @@ class IDEService:
         Returns:
             A boolean indicating if the diff was successfully applied.
         """
-        return self._result
+        pass
 
     def get_visible_range(self) -> LocationWithText:
         """
@@ -131,9 +131,7 @@ class IDEService:
             A tuple denoting the visible range if the IDE is VSCode, or defers to
             IdeaIDEService's get_visible_range method for other IDEs.
         """
-        if self.ide_name() == "vscode":
-            return visible_range()
-        return IdeaIDEService().get_visible_range()
+        pass
 
     def get_selected_range(self) -> LocationWithText:
         """
@@ -143,9 +141,7 @@ class IDEService:
             Calls and returns the result of `selected_range()` if the IDE is VSCode,
             otherwise, it defers to IdeaIDEService's `get_selected_range()` method.
         """
-        if self.ide_name() == "vscode":
-            return selected_range()
-        return IdeaIDEService().get_selected_range()
+        pass
 
     @rpc_method
     def get_diagnostics_in_range(self, fileName: str, startLine: int, endLine: int) -> List[str]:
@@ -155,7 +151,7 @@ class IDEService:
         Returns:
             A list of diagnostic messages for the specified range.
         """
-        return self._result
+        pass
 
     @rpc_method
     def get_collapsed_code(self, fileName: str, startLine: int, endLine: int) -> str:
@@ -165,7 +161,7 @@ class IDEService:
         Returns:
             The collapsed code.
         """
-        return self._result
+        pass
 
     @rpc_method
     def get_extension_tools_path(self) -> str:
@@ -175,4 +171,4 @@ class IDEService:
         Returns:
             The extension tools path.
         """
-        return self._result
+        pass

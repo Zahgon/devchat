@@ -33,22 +33,16 @@ class FixSizeChatMemory(ChatMemory):
         """
         Append a request to the memory.
         """
-        self._messages.append(request)
+        pass
 
     def append_response(self, response):
         """
         Append a response to the memory.
         """
-        self._messages.append(response)
-        if len(self._messages) > self._max_size * 2:
-            self._messages = self._messages[-self._max_size * 2 :]
+        pass
 
     def contexts(self):
         """
         Return the contexts of the memory.
         """
-        messages = self._messages.copy()
-        # insert system prompt at the beginning
-        if self._system_prompt:
-            messages = [{"role": "system", "content": self._system_prompt}] + messages
-        return messages
+        pass

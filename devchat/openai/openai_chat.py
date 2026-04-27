@@ -49,91 +49,13 @@ class OpenAIChat(Chat):
         self.config = config
 
     def init_prompt(self, request: str, function_name: Optional[str] = None) -> OpenAIPrompt:
-        user, email = get_user_info()
-        self.config.user = user_id(user, email)[1]
-        prompt = OpenAIPrompt(self.config.model, user, email)
-        prompt.set_request(request, function_name=function_name)
-        return prompt
+        pass
 
     def load_prompt(self, data: dict) -> OpenAIPrompt:
-        data["_new_messages"] = {
-            k: [OpenAIMessage.from_dict(m) for m in v]
-            if isinstance(v, list)
-            else OpenAIMessage.from_dict(v)
-            for k, v in data["_new_messages"].items()
-            if k != "function"
-        }
-        data["_history_messages"] = {
-            k: [OpenAIMessage.from_dict(m) for m in v] for k, v in data["_history_messages"].items()
-        }
-        return OpenAIPrompt(**data)
+        pass
 
     def complete_response(self, prompt: OpenAIPrompt) -> str:
-        import httpx
-        import openai
-
-        # Filter the config parameters with set values
-        config_params = self.config.dict(exclude_unset=True)
-        if prompt.get_functions():
-            config_params["functions"] = prompt.get_functions()
-            config_params["function_call"] = "auto"
-        config_params["stream"] = False
-
-        proxy_url = os.environ.get("DEVCHAT_PROXY", "")
-        proxy_setting = (
-            {"proxy": {"https://": proxy_url, "http://": proxy_url}} if proxy_url else {}
-        )
-
-        client = openai.OpenAI(
-            api_key=os.environ.get("OPENAI_API_KEY", None),
-            base_url=os.environ.get("OPENAI_API_BASE", None),
-            http_client=httpx.Client(**proxy_setting, trust_env=False),
-        )
-
-        response = client.chat.completions.create(messages=prompt.messages, **config_params)
-        if isinstance(response, openai.types.chat.chat_completion.ChatCompletion):
-            return json.dumps(response.dict())
-        return str(response)
+        pass
 
     def stream_response(self, prompt: OpenAIPrompt) -> Iterator:
-        api_key = os.environ.get("OPENAI_API_KEY", None)
-        base_url = os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1/")
-
-        if (
-            not os.environ.get("USE_TIKTOKEN", False)
-            and base_url.find("https://api.openai.com/v1") == -1
-        ):
-            config_params = self.config.dict(exclude_unset=True)
-            if prompt.get_functions():
-                config_params["functions"] = prompt.get_functions()
-                config_params["function_call"] = "auto"
-            config_params["stream"] = True
-
-            data = {"messages": prompt.messages, **config_params, "timeout": 180}
-            response = stream_request(api_key, base_url, data)
-            return response
-        import httpx
-        import openai
-
-        # Filter the config parameters with set values
-        config_params = self.config.dict(exclude_unset=True)
-        if prompt.get_functions():
-            config_params["functions"] = prompt.get_functions()
-            config_params["function_call"] = "auto"
-        config_params["stream"] = True
-
-        proxy_url = os.environ.get("DEVCHAT_PROXY", "")
-        proxy_setting = (
-            {"proxy": {"https://": proxy_url, "http://": proxy_url}} if proxy_url else {}
-        )
-
-        client = openai.OpenAI(
-            api_key=os.environ.get("OPENAI_API_KEY", None),
-            base_url=os.environ.get("OPENAI_API_BASE", None),
-            http_client=httpx.Client(**proxy_setting, trust_env=False),
-        )
-
-        response = client.chat.completions.create(
-            messages=prompt.messages, **config_params, timeout=180
-        )
-        return response
+        pass

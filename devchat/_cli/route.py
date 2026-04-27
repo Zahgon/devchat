@@ -76,7 +76,4 @@ def route(
     ```
 
     """
-    from devchat._cli.router import llm_route
-
-    llm_route(content, parent, reference, instruct, context, model, config_str, auto)
-    sys.exit(0)
+    pass

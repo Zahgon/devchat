@@ -26,28 +26,7 @@ def gen_log_prompt(jsondata: Optional[str] = None, filepath: Optional[str] = Non
     """
     Generate a hash for a chat record
     """
-    assert jsondata is not None or filepath is not None, "Either jsondata or filepath is required."
-
-    if jsondata is None:
-        with open(filepath, "r", encoding="utf-8") as f:
-            jsondata = f.read()
-
-    prompt_data = PromptData(**json.loads(jsondata))
-    name = user_info.name
-    email = user_info.email
-    prompt = OpenAIPrompt(prompt_data.model, name, email)
-
-    prompt.model = prompt_data.model
-    prompt.input_messages(prompt_data.messages)
-    prompt.parent = prompt_data.parent
-    prompt.references = prompt_data.references
-    prompt.timestamp = prompt_data.timestamp
-    prompt.request_tokens = prompt_data.request_tokens
-    prompt.response_tokens = prompt_data.response_tokens
-
-    prompt.finalize_hash()
-
-    return prompt
+    pass
 
 
 def insert_log_prompt(prompt: OpenAIPrompt, workspace_path: Optional[str]) -> str:
@@ -56,17 +35,7 @@ def insert_log_prompt(prompt: OpenAIPrompt, workspace_path: Optional[str]) -> st
 
     return the hash of the inserted chat record (prompt)
     """
-    user_chat_dir = USER_CHAT_DIR
-    workspace_chat_dir = get_workspace_chat_dir(workspace_path)
-
-    model, config = get_model_config(user_chat_dir)
-    openai_config = OpenAIChatConfig(model=model, **config.dict(exclude_unset=True))
-
-    chat = OpenAIChat(openai_config)
-    store = Store(workspace_chat_dir, chat)
-    _ = store.store_prompt(prompt)
-
-    return prompt.hash
+    pass
 
 
 def delete_log_prompt(hash: str, workspace_path: Optional[str]) -> Tuple[bool, Optional[str]]:
@@ -76,15 +45,4 @@ def delete_log_prompt(hash: str, workspace_path: Optional[str]) -> Tuple[bool, O
     return:
         success: True if the prompt is deleted successfully, False otherwise
     """
-    user_chat_dir = USER_CHAT_DIR
-    workspace_chat_dir = get_workspace_chat_dir(workspace_path)
-
-    model, config = get_model_config(user_chat_dir)
-    openai_config = OpenAIChatConfig(model=model, **config.dict(exclude_unset=True))
-
-    chat = OpenAIChat(openai_config)
-    store = Store(workspace_chat_dir, chat)
-
-    success = store.delete_prompt(hash)
-
-    return success
+    pass

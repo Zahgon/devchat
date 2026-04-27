@@ -30,48 +30,21 @@ def _try_remove_markdown_block_flag(content):
     """
     If the content is a markdown block, this function removes the header ```xxx and footer ```
     """
-    # Define a regex pattern to match the header and footer of a markdown block
-    pattern = r"^\s*```\s*(\w+)\s*\n(.*?)\n\s*```\s*$"
-
-    # Use the re module to match the pattern
-    match = re.search(pattern, content, re.DOTALL | re.MULTILINE)
-
-    if match:
-        # If a match is found, extract the content of the markdown block and return it
-        _ = match.group(1)  # language
-        markdown_content = match.group(2)
-        return markdown_content.strip()
-    # If no match is found, return the original content
-    return content
+    pass
 
 
-# 模块级变量用于缓存配置
+# æ¨¡å�—çº§å�˜é‡�ç”¨äºŽç¼“å­˜é…�ç½®
 _chat_config: Dict[str, Any] = {}
 
 
 def _load_chat_config() -> None:
-    """加载聊天配置到全局变量"""
-    global _chat_config
-    chat_config_path = Path(CHAT_DIR) / CHAT_CONFIG_FILENAME
-    with open(chat_config_path, "r", encoding="utf-8") as file:
-        _chat_config = yaml.safe_load(file)
+    """åŠ è½½è�Šå¤©é…�ç½®åˆ°å…¨å±€å�˜é‡�"""
+    pass
 
 
 def get_maxtokens_by_model(model: str) -> int:
-    # 如果配置还没有加载，则加载配置
-    if not _chat_config:
-        _load_chat_config()
-
-    # 默认值设置为1024
-    default_max_tokens = 1024
-
-    # 检查模型是否在配置中
-    if model in _chat_config.get("models", {}):
-        # 如果模型存在，尝试获取max_tokens，如果不存在则返回默认值
-        return _chat_config["models"][model].get("max_tokens", default_max_tokens)
-    else:
-        # 如果模型不在配置中，返回默认值
-        return default_max_tokens
+    # å¦‚æžœé…�ç½®è¿˜æ²¡æœ‰åŠ è½½ï¼Œåˆ™åŠ è½½é…�ç½®
+    pass
 
 
 def chat_completion_stream_commit(
@@ -81,92 +54,42 @@ def chat_completion_stream_commit(
     """
     This function is used to commit chat completion stream
     """
-    proxy_url = os.environ.get("DEVCHAT_PROXY", "")
-    proxy_setting = {"proxy": {"https://": proxy_url, "http://": proxy_url}} if proxy_url else {}
-
-    # Initialize OpenAI client with API key, base URL and http client
-    client = openai.OpenAI(
-        api_key=os.environ.get("OPENAI_API_KEY", None),
-        base_url=os.environ.get("OPENAI_API_BASE", None),
-        http_client=httpx.Client(**proxy_setting, trust_env=False),
-    )
-
-    # Update llm_config dictionary
-    llm_config["stream"] = True
-    llm_config["timeout"] = 60
-    llm_config["max_tokens"] = get_maxtokens_by_model(llm_config["model"])
-    # Return chat completions
-    return client.chat.completions.create(messages=messages, **llm_config)
+    pass
 
 
 def chat_completion_stream_raw(**kwargs):
     """
     This function is used to get raw chat completion stream
     """
-    proxy_url = os.environ.get("DEVCHAT_PROXY", "")
-    proxy_setting = {"proxy": {"https://": proxy_url, "http://": proxy_url}} if proxy_url else {}
-
-    # Initialize OpenAI client with API key, base URL and http client
-    client = openai.OpenAI(
-        api_key=os.environ.get("OPENAI_API_KEY", None),
-        base_url=os.environ.get("OPENAI_API_BASE", None),
-        http_client=httpx.Client(**proxy_setting, trust_env=False),
-    )
-
-    # Update kwargs dictionary
-    kwargs["stream"] = True
-    kwargs["timeout"] = 60
-    kwargs["max_tokens"] = get_maxtokens_by_model(kwargs["model"])
-    # Return chat completions
-    return client.chat.completions.create(**kwargs)
+    pass
 
 
 def stream_out_chunk(chunks):
     """
     This function is used to print out chunks of data
     """
-    for chunk in chunks:
-        chunk_dict = chunk.dict()
-        if len(chunk_dict["choices"]) > 0:
-            delta = chunk_dict["choices"][0]["delta"]
-            if delta.get("content", None):
-                print(delta["content"], end="", flush=True)
-            yield chunk
+    pass
 
 
 def retry_timeout(chunks):
     """
     This function is used to handle timeout errors
     """
-    try:
-        for chunk in chunks:
-            yield chunk
-    except (openai.APIConnectionError, openai.APITimeoutError) as err:
-        IDEService().ide_logging("info", f"in retry_timeout: err: {err}")
-        raise RetryException(err) from err
+    pass
 
 
 def chunk_list(chunks):
     """
     This function is used to convert chunks into a list
     """
-    return [chunk for chunk in chunks]
+    pass
 
 
 def chunks_content(chunks):
     """
     This function is used to extract content from chunks
     """
-    content = None
-    for chunk in chunks:
-        chunk_dict = chunk.dict()
-        if len(chunk_dict["choices"]) > 0:
-            delta = chunk_dict["choices"][0]["delta"]
-            if delta.get("content", None):
-                if content is None:
-                    content = ""
-                content += delta["content"]
-    return content
+    pass
 
 
 def chunks_call(chunks):
@@ -174,54 +97,21 @@ def chunks_call(chunks):
     This function is used to extract tool
     calls from chunks
     """
-    tool_calls = []
-
-    for chunk in chunks:
-        chunk = chunk.dict()
-        if len(chunk["choices"]) > 0:
-            delta = chunk["choices"][0]["delta"]
-            if "tool_calls" in delta and delta["tool_calls"]:
-                tool_call = delta["tool_calls"][0]["function"]
-                if delta["tool_calls"][0].get("index", None) is not None:
-                    index = delta["tool_calls"][0]["index"]
-                    if index >= len(tool_calls):
-                        tool_calls.append({"name": None, "arguments": ""})
-                if tool_call.get("name", None):
-                    tool_calls[-1]["name"] = tool_call["name"]
-                if tool_call.get("arguments", None):
-                    tool_calls[-1]["arguments"] += tool_call["arguments"]
-    return tool_calls
+    pass
 
 
 def content_to_json(content):
     """
     This function is used to convert content to JSON
     """
-    try:
-        content_no_block = _try_remove_markdown_block_flag(content)
-        response_obj = json.loads(content_no_block, strict=False)
-        return response_obj
-    except json.JSONDecodeError as err:
-        IDEService().ide_logging("debug", f"Receive content: {content}")
-        IDEService().ide_logging("debug", f"in content_to_json: json decode error: {err}")
-        raise RetryException(err) from err
-    except Exception as err:
-        IDEService().ide_logging("debug", f"in content_to_json: other error: {err}")
-        raise err
+    pass
 
 
 def to_dict_content_and_call(content, tool_calls=None):
     """
     This function is used to convert content and tool calls to a dictionary
     """
-    if tool_calls is None:
-        tool_calls = []
-    return {
-        "content": content,
-        "function_name": tool_calls[0]["name"] if tool_calls else None,
-        "parameters": tool_calls[0]["arguments"] if tool_calls else "",
-        "tool_calls": tool_calls,
-    }
+    pass
 
 
 # Define a pipeline function for chat completion content.
@@ -269,10 +159,7 @@ def chat_completion_no_stream_return_json(messages: List[Dict], llm_config: Dict
     """
     This function is used to get chat completion without streaming and return JSON object
     """
-    llm_config["response_format"] = {"type": "json_object"}
-    return chat_completion_no_stream_return_json_with_retry(
-        messages=messages, llm_config=llm_config
-    )
+    pass
 
 
 # Define a pipeline function for chat completion stream.

@@ -34,10 +34,7 @@ class CommandParser:
         :param name: The command name in the namespace.
         :return: The JSON representation of the command.
         """
-        file_path = self.namespace.get_file(name, "command.yml")
-        if not file_path:
-            return None
-        return parse_command(file_path)
+        pass
 
 
 def parse_command(file_path: str) -> Command:
@@ -47,13 +44,4 @@ def parse_command(file_path: str) -> Command:
     :param file_path: The path to the configuration file.
     :return: The validated configuration as a Pydantic model.
     """
-    # get path from file_path, /xx1/xx2/xx3.py => /xx1/xx2
-    config_dir = os.path.dirname(file_path)
-
-    with open(file_path, "r", encoding="utf-8") as file:
-        # replace {curpath} with config_dir
-        content = file.read().replace("$command_path", config_dir.replace("\\", "/"))
-        config_dict = yaml.safe_load(content)
-    config = Command(**config_dict)
-    config.path = file_path
-    return config
+    pass
